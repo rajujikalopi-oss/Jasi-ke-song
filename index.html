@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Very Bad Jassi</title>
+
+<style>
+  body {
+    background: #0f0f0f;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .player {
+    background: #1c1c1c;
+    padding: 20px;
+    border-radius: 12px;
+    width: 320px;
+  }
+
+  button, select {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  button:hover, select:hover {
+    background: #444;
+  }
+
+  input[type="range"] {
+    width: 100%;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0;
+  }
+
+  .time {
+    font-size: 12px;
+    color: #ccc;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="player">
+  <h3>🎧 Jassi 2nd wale Lyrics acche hain vaise hi gaake bhej baki ke bhi.</h3>
+
+  <audio id="audio" src="song.mp3"></audio>
+
+  <!-- Seek bar -->
+  <input type="range" id="seek" value="0">
+
+  <div class="row time">
+    <span id="current">0:00</span>
+    <span id="duration">0:00</span>
+  </div>
+
+  <!-- Controls -->
+  <div class="row">
+    <button onclick="togglePlay()">▶ / ⏸</button>
+    <button onclick="toggleMute()">🔇</button>
+
+    <select onchange="setSpeed(this.value)">
+      <option value="0.5">0.5x</option>
+      <option value="1" selected>1x</option>
+      <option value="1.5">1.5x</option>
+      <option value="2">2x</option>
+    </select>
+  </div>
+
+  <!-- Volume -->
+  <label>Volume</label>
+  <input type="range" min="0" max="1" step="0.01" value="1"
+         onchange="setVolume(this.value)">
+</div>
+
+<script>
+const audio = document.getElementById("audio");
+const seek = document.getElementById("seek");
+const current = document.getElementById("current");
+const duration = document.getElementById("duration");
+
+function togglePlay() {
+  audio.paused ? audio.play() : audio.pause();
+}
+
+function setVolume(val) {
+  audio.volume = val;
+}
+
+function toggleMute() {
+  audio.muted = !audio.muted;
+}
+
+function setSpeed(speed) {
+  audio.playbackRate = speed;
+}
+
+audio.addEventListener("loadedmetadata", () => {
+  seek.max = audio.duration;
+  duration.textContent = formatTime(audio.duration);
+});
+
+audio.addEventListener("timeupdate", () => {
+  seek.value = audio.currentTime;
+  current.textContent = formatTime(audio.currentTime);
+});
+
+seek.addEventListener("input", () => {
+  audio.currentTime = seek.value;
+});
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s < 10 ? "0" : ""}${s}`;
+}
+</script>
+
+</body>
+</html>
